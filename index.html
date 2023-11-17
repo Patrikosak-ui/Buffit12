@@ -6,6 +6,20 @@
     <title>Documendadat</title>
 </head>
 <body>
+    <h2>Registrace</h2>
+    <form action="register.php" method="post">
+        Jméno: <input type="text" name="jmeno" required><br>
+        Příjmení: <input type="text" name="prijmeni" required><br>
+        E-mail: <input type="email" name="email" required><br>
+        Heslo: <input type="password" name="heslo" required><br>
+        <input type="submit" value="Registrovat">
+    </form>
 
+    <h2>Přihlášení</h2>
+    <form action="login.php" method="post">
+        E-mail: <input type="email" name="login_email" required><br>
+        Heslo: <input type="password" name="login_heslo" required><br>
+        <input type="submit" value="Přihlásit">
+    </form>
 </body>
 </html>
