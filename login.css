@@ -1,0 +1,52 @@
+body {
+    background-color: #494c4e; /* Tmavě modrá barva pro pozadí */
+    font-family: 'Arial', sans-serif;
+    color: #fff; /* Bílá barva textu pro kontrast */
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+main {
+    background-color: rgba(112, 112, 112, 0.8); /* Průhledné bílé pozadí pro formulář */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%; /* Přizpůsobení šířky formuláře 100% */
+    margin: 0 auto;
+}
+
+h2 {
+    text-align: center;
+    color: #ecf0f1; /* Světle modrá barva pro nadpis */
+    margin-bottom: 20px; /* Přidán odstup na spodní část nadpisu */
+}
+
+form input {
+    width: calc(100% - 20px); /* Přizpůsobení šířky včetně paddingu */
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+form input[type="submit"] {
+    background-color: #202020; /* Modrá barva pro tlačítko přihlášení */
+    color: #fff;
+    cursor: pointer;
+}
+
+form input[type="submit"]:hover {
+    background-color: #9b9b9b; /* Tmavší odstín modré při najetí myší */
+}
+
+/* Přidání responzivních vlastností pro menší obrazovky */
+@media screen and (max-width: 600px) {
+    main {
+        margin-top: 20px;
+    }
+}
