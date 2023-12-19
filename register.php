@@ -16,6 +16,8 @@
         Příjmení: <input type="text" name="prijmeni" required><br>
         Email: <input type="email" name="email" required><br>
         Heslo: <input type="password" name="heslo" required><br>
+        Instagram: <input type="text" name="instagram"><br>
+        YouTube: <input type="text" name="youtube"><br>
         <input type="submit" value="Registrovat">
     </form>
 
@@ -39,15 +41,19 @@
         $prijmeni = $_POST["prijmeni"];
         $email = $_POST["email"];
         $heslo = password_hash($_POST["heslo"], PASSWORD_DEFAULT); // Hashování hesla
+        $instagram = $_POST["instagram"];
+        $youtube = $_POST["youtube"];
 
         // Příprava a provedení SQL dotazu pro vložení do tabulky users
-        $sql = "INSERT INTO users (jmeno, prijmeni, email, heslo) VALUES (:jmeno, :prijmeni, :email, :heslo)";
+        $sql = "INSERT INTO users (jmeno, prijmeni, email, heslo, Instagram, Youtube) VALUES (:jmeno, :prijmeni, :email, :heslo, :instagram, :youtube)";
         $stmt = $conn->prepare($sql);
 
         $stmt->bindParam(':jmeno', $jmeno);
         $stmt->bindParam(':prijmeni', $prijmeni);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':heslo', $heslo);
+        $stmt->bindParam(':instagram', $instagram);
+        $stmt->bindParam(':youtube', $youtube);
 
         try {
             $stmt->execute();
