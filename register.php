@@ -12,10 +12,13 @@
     <h2>Registrace</h2>
 
     <form action="register.php" method="post">
+        Instagram: <input type="instagram" name="instagram"required><br>
+        YouTube: <input type="youtube" name="youtube"required><br>
         Jméno: <input type="text" name="jmeno" required><br>
         Příjmení: <input type="text" name="prijmeni" required><br>
         Email: <input type="email" name="email" required><br>
         Heslo: <input type="password" name="heslo" required><br>
+       
         <input type="submit" value="Registrovat">
     </form>
 
@@ -39,15 +42,19 @@
         $prijmeni = $_POST["prijmeni"];
         $email = $_POST["email"];
         $heslo = password_hash($_POST["heslo"], PASSWORD_DEFAULT); // Hashování hesla
+        $instagram = $_POST["instagram"];
+        $youtube = $_POST["youtube"];
 
         // Příprava a provedení SQL dotazu pro vložení do tabulky users
-        $sql = "INSERT INTO users (jmeno, prijmeni, email, heslo) VALUES (:jmeno, :prijmeni, :email, :heslo)";
+        $sql = "INSERT INTO users (Jmeno, Prijmeni, Email, Heslo, Instagram, Youtube) VALUES (:jmeno, :prijmeni, :email, :heslo, :instagram, :youtube)";
         $stmt = $conn->prepare($sql);
 
         $stmt->bindParam(':jmeno', $jmeno);
         $stmt->bindParam(':prijmeni', $prijmeni);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':heslo', $heslo);
+        $stmt->bindParam(':instagram', $instagram);
+        $stmt->bindParam(':youtube', $youtube);
 
         try {
             $stmt->execute();

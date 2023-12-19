@@ -35,7 +35,7 @@
             $heslo = $_POST["heslo"];
 
             // Příprava a provedení SQL dotazu pro ověření přihlašovacích údajů
-            $sql = "SELECT * FROM users WHERE email = :email";
+            $sql = "SELECT * FROM users WHERE Email = :email";
             $stmt = $conn->prepare($sql);
 
             $stmt->bindParam(':email', $email);
@@ -44,8 +44,8 @@
                 $stmt->execute();
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                if ($user && password_verify($heslo, $user['heslo'])) {
-                    echo "Přihlášení úspěšné. Vítejte, " . $user['jmeno'] . "!";
+                if ($user && password_verify($heslo, $user['Heslo'])) {
+                    echo "Přihlášení úspěšné. Vítejte, " . $user['Jmeno'] . "!";
                     // Zde byste měli nastavit relaci a přesměrovat uživatele na jejich domovskou stránku.
                 } else {
                     echo "Neplatné přihlašovací údaje. Zkuste to znovu nebo <a href='register.html'>se zaregistrujte</a>.";

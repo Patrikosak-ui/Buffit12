@@ -17,6 +17,8 @@ main {
     max-width: 400px;
     width: 100%; /* Přizpůsobení šířky formuláře 100% */
     margin: 0 auto;
+    max-height:600px;
+    height:100%;
 }
 
 h2 {
@@ -32,6 +34,14 @@ form input {
     border: 1px solid #ddd;
     border-radius: 4px;
     box-sizing: border-box;
+    background-color: transparent; /* Průhledné pole pro vstupy */
+    color: #fff; /* Bílý text pro kontrast */
+}
+
+form input[type="text"] {
+    /* Přizpůsobení styly pro textová pole (Instagram a YouTube) */
+    background-color: transparent;
+    color: #fff;
 }
 
 form input[type="submit"] {
