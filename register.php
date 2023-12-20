@@ -12,12 +12,18 @@
     <h2>Registrace</h2>
 
     <form action="register.php" method="post">
+        Instagram: <input type="instagram" name="instagram"required><br>
+        YouTube: <input type="youtube" name="youtube"required><br>
         Jméno: <input type="text" name="jmeno" required><br>
         Příjmení: <input type="text" name="prijmeni" required><br>
         Email: <input type="email" name="email" required><br>
         Heslo: <input type="password" name="heslo" required><br>
+<<<<<<< HEAD
         Instagram: <input type="text" name="instagram"><br>
         YouTube: <input type="text" name="youtube"><br>
+=======
+       
+>>>>>>> 7b3a9e922e776b248257640f8d09142f746dde41
         <input type="submit" value="Registrovat">
     </form>
 
@@ -45,7 +51,11 @@
         $youtube = $_POST["youtube"];
 
         // Příprava a provedení SQL dotazu pro vložení do tabulky users
+<<<<<<< HEAD
         $sql = "INSERT INTO users (jmeno, prijmeni, email, heslo, Instagram, Youtube) VALUES (:jmeno, :prijmeni, :email, :heslo, :instagram, :youtube)";
+=======
+        $sql = "INSERT INTO users (Jmeno, Prijmeni, Email, Heslo, Instagram, Youtube) VALUES (:jmeno, :prijmeni, :email, :heslo, :instagram, :youtube)";
+>>>>>>> 7b3a9e922e776b248257640f8d09142f746dde41
         $stmt = $conn->prepare($sql);
 
         $stmt->bindParam(':jmeno', $jmeno);
