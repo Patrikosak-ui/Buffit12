@@ -75,24 +75,24 @@
     <main>
         <h2>Registrace</h2>
         <form action="register.php" method="post">
-            Instagram: <input type="instagram" name="instagram" required><br>
-            YouTube: <input type="youtube" name="youtube" required><br>
+            
             Jméno: <input type="text" name="jmeno" required><br>
             Příjmení: <input type="text" name="prijmeni" required><br>
             Email: <input type="email" name="email" required><br>
             Heslo: <input type="password" name="heslo" required><br>
             Instagram: <input type="text" name="instagram"><br>
             YouTube: <input type="text" name="youtube"><br>
+        
             <input type="submit" value="Registrovat">
         </form>
 
         <?php
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Připojení k databázi
-            $host = "MariaDB";
-            $db_name = "d230417_rofl";
-            $username = "a230417_buffit";
-            $password = "n6T3uSvj";
+            $host = "md66.wedos.net";
+        $db_name = "d230417_buffit";
+        $username = "a230417_buffit";
+        $password = "n6T3uSvj";
 
             try {
                 $conn = new PDO("mysql:host=$host;dbname=$db_name", $username, $password);
@@ -110,7 +110,7 @@
             $youtube = $_POST["youtube"];
 
             // Příprava a provedení SQL dotazu pro vložení do tabulky users
-            $sql = "INSERT INTO users (jmeno, prijmeni, email, heslo, Instagram, Youtube) VALUES (:jmeno, :prijmeni, :email, :heslo, :instagram, :youtube)";
+            $sql = "INSERT INTO Users (Jmeno, Prijmeni, Email, Heslo, Instagram, Youtube) VALUES (:jmeno, :prijmeni, :email, :heslo, :instagram, :youtube)";
             
             $stmt = $conn->prepare($sql);
 

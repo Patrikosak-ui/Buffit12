@@ -1,0 +1,2 @@
+Udělat ukládání do databáze a nahrávaní nahraných videí na profil  hotvo (dodělat nahrávání do total comanderu)
+vytváření soutěží

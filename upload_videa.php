@@ -1,3 +1,83 @@
+<?php
+session_start();
+
+
+// Kontrola přihlášení
+if (!isset($_SESSION['user_id'])) {
+    // Uživatel není přihlášen, přesměrovat na přihlašovací stránku
+    header("Location: login.php");
+    exit();
+}
+
+$targetDirectory = "Videa/";
+$uploadOk = 1;
+
+// Zkontrolujte, zda byl formulář odeslán a byl vybrán soubor
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["fileToUpload"])) {
+    $fileType = strtolower(pathinfo($_FILES["fileToUpload"]["name"], PATHINFO_EXTENSION));
+    $allowedFormats = array("mp4", "avi", "wmv", "mov");
+
+    // Kontrola povolených formátů souborů
+    if (!in_array($fileType, $allowedFormats)) {
+        echo "Omlouváme se, povoleny jsou pouze soubory typu MP4, AVI, WMV a MOV.";
+        $uploadOk = 0;
+    }
+
+    // Kontrola velikosti nahrávaného souboru
+    if ($_FILES["fileToUpload"]["size"] > 50000000) { 
+        echo "Omlouváme se, váš soubor je příliš velký.";
+        $uploadOk = 0;
+    }
+
+    // Pokud nahrávání není v pořádku, zobrazte chybové hlášení
+    if ($uploadOk == 0) {
+        echo "Omlouváme se, váš soubor nebyl nahrán.";
+    } else {
+        $targetFile = $targetDirectory . basename($_FILES["fileToUpload"]["name"]);
+
+        // Pokud byl soubor úspěšně nahrán
+        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $targetFile)) {
+            echo "Soubor " . htmlspecialchars(basename($_FILES["fileToUpload"]["name"])) . " byl úspěšně nahrán.";
+
+            $host = "md66.wedos.net";
+            $db_name = "d230417_buffit";
+            $username = "a230417_buffit";
+            $password = "n6T3uSvj";
+
+            try {
+                $conn = new PDO("mysql:host=$host;dbname=$db_name", $username, $password);
+                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                $title = isset($_POST['title']) ? htmlspecialchars($_POST['title']) : "Vložte zde nějaký titul";
+
+                // Připravený dotaz pro vložení do databáze
+                $sql = "INSERT INTO Soutezni_videa (Title, Video_path) VALUES (:title, :targetFile)";
+                
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':title', $title);
+                $stmt->bindParam(':targetFile', $targetFile);
+
+                // Proveďte dotaz a zkontrolujte, zda byl úspěšně proveden
+                if ($stmt->execute()) {
+                    echo "Záznam byl úspěšně přidán do databáze.";
+                } else {
+                    echo "Chyba při přidávání záznamu do databáze.";
+                }
+
+                // Přesměrujte na soutezni_videa.php
+                echo "<script>window.location.href = 'soutezni_videa.php';</script>";
+            } catch (PDOException $e) {
+                echo "Chyba: " . $e->getMessage();
+            }
+
+            $conn = null;
+        } else {
+            echo "Omlouváme se, došlo k chybě při nahrávání souboru.";
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,10 +114,18 @@
             margin-bottom: 20px;
         }
 
-        form input {
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label, input {
+            margin-bottom: 15px;
+        }
+
+        input[type="file"], input[type="text"], input[type="submit"] {
             width: calc(100% - 20px);
             padding: 10px;
-            margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
             box-sizing: border-box;
@@ -45,18 +133,12 @@
             color: #fff;
         }
 
-        form input[type="text"] {
+        input[type="submit"] {
             background-color: #494c4e;
-            color: #fff;
-        }
-
-        form input[type="submit"] {
-            background-color: #494c4e;
-            color: #fff;
             cursor: pointer;
         }
 
-        form input[type="submit"]:hover {
+        input[type="submit"]:hover {
             background-color: #303336;
         }
 
@@ -82,69 +164,3 @@
     </main>
 </body>
 </html>
-
-<?php
-$targetDirectory = "C:/xampp/htdocs/buffit/Videa/";
-$uploadOk = 1;
-
-// Check if the file is a video file
-if (isset($_POST["submit"]) && isset($_FILES["fileToUpload"])) {
-    $fileType = strtolower(pathinfo($_FILES["fileToUpload"]["name"], PATHINFO_EXTENSION));
-    $allowedFormats = array("mp4", "avi", "wmv", "mov");
-
-    if (!in_array($fileType, $allowedFormats)) {
-        echo "Sorry, only MP4, AVI, WMV, and MOV files are allowed.";
-        $uploadOk = 0;
-    }
-
-    // Check file size
-    if ($_FILES["fileToUpload"]["size"] > 50000000) { // Adjust the file size limit as needed
-        echo "Sorry, your file is too large.";
-        $uploadOk = 0;
-    }
-
-    // Check if $uploadOk is set to 0 by an error
-    if ($uploadOk == 0) {
-        echo "Sorry, your file was not uploaded.";
-    } else {
-        $targetFile = $targetDirectory . basename($_FILES["fileToUpload"]["name"]);
-
-        // If everything is ok, try to upload file
-        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $targetFile)) {
-            echo "The file " . htmlspecialchars(basename($_FILES["fileToUpload"]["name"])) . " has been uploaded.";
-
-        
-            $host = "MariaDB";
-            $db_name = "d230417_rofl";
-            $username = "a230417_buffit";
-            $password = "n6T3uSvj";
-
-            try {
-                $conn = new PDO("mysql:host=$host;dbname=$db_name", $username, $password);
-                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-                // Získání titulu z formuláře
-                $title = isset($_POST['title']) ? $_POST['title'] : "Vložte zde nějaký titul";
-
-                // Příprava SQL dotazu pro vložení do tabulky
-                $sql = "INSERT INTO soutezni_videa (title, video_path) VALUES (:title, :targetFile)";
-                
-                // Příprava a provedení připraveného dotazu
-                $stmt = $conn->prepare($sql);
-                $stmt->bindParam(':title', $title);
-                $stmt->bindParam(':targetFile', $targetFile);
-                $stmt->execute();
-
-                echo "Record added to the database successfully.";
-            } catch (PDOException $e) {
-                echo "Error: " . $e->getMessage();
-            }
-
-            // Uzavření připojení k databázi
-            $conn = null;
-        } else {
-            echo "Sorry, there was an error uploading your file.";
-        }
-    }
-}
-?>
