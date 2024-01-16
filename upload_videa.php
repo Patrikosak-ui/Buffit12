@@ -2,9 +2,8 @@
 session_start();
 
 
-// Kontrola přihlášení
 if (!isset($_SESSION['user_id'])) {
-    // Uživatel není přihlášen, přesměrovat na přihlašovací stránku
+   
     header("Location: login.php");
     exit();
 }
@@ -12,30 +11,30 @@ if (!isset($_SESSION['user_id'])) {
 $targetDirectory = "Videa/";
 $uploadOk = 1;
 
-// Zkontrolujte, zda byl formulář odeslán a byl vybrán soubor
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["fileToUpload"])) {
     $fileType = strtolower(pathinfo($_FILES["fileToUpload"]["name"], PATHINFO_EXTENSION));
     $allowedFormats = array("mp4", "avi", "wmv", "mov");
 
-    // Kontrola povolených formátů souborů
+   
     if (!in_array($fileType, $allowedFormats)) {
         echo "Omlouváme se, povoleny jsou pouze soubory typu MP4, AVI, WMV a MOV.";
         $uploadOk = 0;
     }
 
-    // Kontrola velikosti nahrávaného souboru
+    
     if ($_FILES["fileToUpload"]["size"] > 50000000) { 
         echo "Omlouváme se, váš soubor je příliš velký.";
         $uploadOk = 0;
     }
 
-    // Pokud nahrávání není v pořádku, zobrazte chybové hlášení
+    
     if ($uploadOk == 0) {
         echo "Omlouváme se, váš soubor nebyl nahrán.";
     } else {
         $targetFile = $targetDirectory . basename($_FILES["fileToUpload"]["name"]);
 
-        // Pokud byl soubor úspěšně nahrán
+       
         if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $targetFile)) {
             echo "Soubor " . htmlspecialchars(basename($_FILES["fileToUpload"]["name"])) . " byl úspěšně nahrán.";
 
@@ -50,21 +49,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["fileToUpload"])) {
 
                 $title = isset($_POST['title']) ? htmlspecialchars($_POST['title']) : "Vložte zde nějaký titul";
 
-                // Připravený dotaz pro vložení do databáze
-                $sql = "INSERT INTO Soutezni_videa (Title, Video_path) VALUES (:title, :targetFile)";
+              
+                $ID_user = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+
+                
+                $sql = "INSERT INTO Soutezni_videa (ID_user, Title, Video_path) VALUES (:ID_user, :title, :targetFile)";
                 
                 $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':ID_user', $ID_user);
                 $stmt->bindParam(':title', $title);
                 $stmt->bindParam(':targetFile', $targetFile);
 
-                // Proveďte dotaz a zkontrolujte, zda byl úspěšně proveden
+                
                 if ($stmt->execute()) {
                     echo "Záznam byl úspěšně přidán do databáze.";
                 } else {
                     echo "Chyba při přidávání záznamu do databáze.";
                 }
 
-                // Přesměrujte na soutezni_videa.php
                 echo "<script>window.location.href = 'soutezni_videa.php';</script>";
             } catch (PDOException $e) {
                 echo "Chyba: " . $e->getMessage();
@@ -83,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["fileToUpload"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Upload Form</title>
+    <title>Form pro nahrávání videí</title>
     <style>
         body {
             background-color: #494c4e;

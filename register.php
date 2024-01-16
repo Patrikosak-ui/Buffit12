@@ -88,11 +88,11 @@
 
         <?php
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Připojení k databázi
+            
             $host = "md66.wedos.net";
-        $db_name = "d230417_buffit";
-        $username = "a230417_buffit";
-        $password = "n6T3uSvj";
+            $db_name = "d230417_buffit";
+            $username = "a230417_buffit";
+            $password = "n6T3uSvj";
 
             try {
                 $conn = new PDO("mysql:host=$host;dbname=$db_name", $username, $password);
@@ -101,15 +101,14 @@
                 echo "Chyba připojení k databázi: " . $e->getMessage();
             }
 
-            // Získání hodnot z formuláře
+          
             $jmeno = $_POST["jmeno"];
             $prijmeni = $_POST["prijmeni"];
             $email = $_POST["email"];
-            $heslo = password_hash($_POST["heslo"], PASSWORD_DEFAULT); // Hashování hesla
+            $heslo = password_hash($_POST["heslo"], PASSWORD_DEFAULT); 
             $instagram = $_POST["instagram"];
             $youtube = $_POST["youtube"];
 
-            // Příprava a provedení SQL dotazu pro vložení do tabulky users
             $sql = "INSERT INTO Users (Jmeno, Prijmeni, Email, Heslo, Instagram, Youtube) VALUES (:jmeno, :prijmeni, :email, :heslo, :instagram, :youtube)";
             
             $stmt = $conn->prepare($sql);

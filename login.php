@@ -68,7 +68,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             Heslo: <input type="password" name="heslo" required><br>
             <input type="submit" value="Přihlásit">
         </form>
-
+        
+        <p>Tady se můžeš <a href="register.php">registrovat</a>.</p>
     </main>
 
 </body>
