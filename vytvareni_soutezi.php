@@ -112,6 +112,7 @@ $souteze = $soutezeStmt->fetchAll(PDO::FETCH_ASSOC);
                 <input type="file" class="form-control-file" id="video" name="video" accept="video/*" required>
             </div>
             <button type="submit" class="btn btn-primary">Vytvořit soutěž</button>
+            <a href="index.html" class="btn btn-primary">Back to Index</a>
         </form>
 
         <hr>

@@ -3,22 +3,41 @@ session_start();
 
 // Kontrola přihlášení
 if (!isset($_SESSION['user_id'])) {
-    // Uživatel není přihlášen, přesměrovat na přihlašovací stránku
+    
     header("Location: login.php");
     exit();
 }
 
-require_once 'db_config.php'; // Soubor s konfigurací databáze
+require_once 'db_config.php'; 
 
-// Funkce pro připojení k databázi
+
 function connectToDatabase($host, $db_name, $username, $password) {
     try {
         $conn = new PDO("mysql:host=$host;dbname=$db_name;charset=utf8", $username, $password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $conn;
     } catch (PDOException $e) {
-        echo "Connection failed: " . $e->getMessage();
-        exit();
+        die("Connection failed: " . $e->getMessage());
+    }
+}
+
+
+function handleProfileImageUpload($file, $userId, $conn) {
+    if ($file['error'] === 0) {
+        $targetDirectory = "profile/";
+        $targetFile = $targetDirectory . basename($file['name']);
+
+        if (move_uploaded_file($file['tmp_name'], $targetFile)) {
+            $imagePath = $targetFile;
+            $updateImageQuery = "UPDATE profiles SET profile_image = ? WHERE user_id = ?";
+            $updateImageStmt = $conn->prepare($updateImageQuery);
+            $updateImageStmt->execute([$imagePath, $userId]);
+            echo "Profilový obrázek byl úspěšně nahrán.";
+        } else {
+            echo "Omlouváme se, došlo k chybě při nahrávání souboru.";
+        }
+    } else {
+        echo "Omlouváme se, došlo k chybě při nahrávání souboru. Chyba: " . $file['error'];
     }
 }
 
@@ -35,29 +54,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
     // Uložení do databáze pro přihlášeného uživatele
     $userId = $_SESSION['user_id'];
 
-    // Zpracování nahrání profilového obrázku
-    if ($_FILES['profile_image']['error'] === 0) {
-        $targetDirectory = "profile/";
-        $targetFile = $targetDirectory . basename($_FILES['profile_image']['name']);
+    // Zjistit, zda uživatel již má vytvořený profil
+    $checkProfileQuery = "SELECT * FROM profiles WHERE user_id = ?";
+    $checkProfileStmt = $conn->prepare($checkProfileQuery);
+    $checkProfileStmt->execute([$userId]);
+    $existingProfile = $checkProfileStmt->fetch(PDO::FETCH_ASSOC);
 
-        if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $targetFile)) {
-            // Aktualizace záznamu v databázi s cestou k nahrávanému profilovému obrázku
-            $imagePath = $targetFile;
-            $updateImageQuery = "UPDATE profiles SET profile_image = ? WHERE user_id = ?";
-            $updateImageStmt = $conn->prepare($updateImageQuery);
-            $updateImageStmt->execute([$imagePath, $userId]);
-            echo "Profilový obrázek byl úspěšně nahrán.";
-        } else {
-            echo "Omlouváme se, došlo k chybě při nahrávání souboru. Chyba: " . $_FILES['profile_image']['error'];
-        }
+    if ($existingProfile) {
+        // Profil již existuje, provedeme aktualizaci
+        handleProfileImageUpload($_FILES['profile_image'], $userId, $conn);
+
+        $updateQuery = "UPDATE profiles SET name = ?, age = ?, instagram = ?, youtube = ? WHERE user_id = ?";
+        $updateStmt = $conn->prepare($updateQuery);
+        $updateStmt->execute([$name, $age, $instagram, $youtube, $userId]);
+
+        echo "Profil byl úspěšně aktualizován.";
+    } else {
+        // Profil neexistuje, provedeme vytvoření nového záznamu
+        $createProfileQuery = "INSERT INTO profiles (user_id, name, age, instagram, youtube) VALUES (?, ?, ?, ?, ?)";
+        $createProfileStmt = $conn->prepare($createProfileQuery);
+        $createProfileStmt->execute([$userId, $name, $age, $instagram, $youtube]);
+
+        handleProfileImageUpload($_FILES['profile_image'], $userId, $conn);
+
+        echo "Profil byl úspěšně vytvořen.";
     }
-
-    // Aktualizace záznamu v databázi s informacemi o uživateli
-    $updateQuery = "UPDATE profiles SET name = ?, age = ?, instagram = ?, youtube = ? WHERE user_id = ?";
-    $updateStmt = $conn->prepare($updateQuery);
-    $updateStmt->execute([$name, $age, $instagram, $youtube, $userId]);
-
-    echo "Profil byl úspěšně aktualizován.";
 
     $conn = null;
 }
@@ -73,8 +94,6 @@ $profile = $profileStmt->fetch(PDO::FETCH_ASSOC);
 
 $conn = null;
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -166,6 +185,7 @@ $conn = null;
                 echo '<p><strong>YouTube:</strong> ' . (isset($profile['youtube']) ? $profile['youtube'] : '') . '</p>';
             ?>
             <a href="#" id="edit-profile-btn" class="btn btn-secondary">Edit Profile</a>
+            <a href="index.html" class="btn btn-secondary">Back to Index</a>
         </div>
     </div>
 

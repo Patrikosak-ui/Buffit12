@@ -79,7 +79,7 @@ $souteze = $soutezeStmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <div class="container mt-5">
         <h1 class="mb-4">Seznam soutěží</h1>
-
+        <a href="index.html" class="btn btn-primary">Back to Index</a>
         <!-- Zobrazení seznamu soutěží -->
         <?php
         // Zkontrolujte, zda máte soutěže v databázi
@@ -111,6 +111,7 @@ $souteze = $soutezeStmt->fetchAll(PDO::FETCH_ASSOC);
             echo "<p>Žádné soutěže nebyly nalezeny.</p>";
         }
         ?>
+        
     </div>
     <!-- Bootstrap JS and Popper.js -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>

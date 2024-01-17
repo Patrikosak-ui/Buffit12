@@ -123,6 +123,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["fileToUpload"])) {
 
         label, input {
             margin-bottom: 15px;
+            color : #000;
         }
 
         input[type="file"], input[type="text"], input[type="submit"] {
