@@ -5,7 +5,7 @@ function connectToDatabase() {
     $host = "md66.wedos.net";
     $db_name = "d230417_buffit";
     $username = "a230417_buffit";
-    $password = "n6T3uSvj";
+    $password = "495804Patrik.";
 
     try {
         $conn = new PDO("mysql:host=$host;dbname=$db_name", $username, $password);
@@ -56,21 +56,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="login.css">
-    <title>Přihlášení</title>
+    <link rel="stylesheet" href="logiin.css">
+    <title>Logina</title>
 </head>
 <body>
 
-    <main>
-        <h2>Přihlášení</h2>
-        <form action="login.php" method="post">
-            Email: <input type="email" name="email" required><br>
-            Heslo: <input type="password" name="heslo" required><br>
-            <input type="submit" value="Přihlásit">
-        </form>
-        
-        <p>Tady se můžeš <a href="register.php">registrovat</a>.</p>
-    </main>
+<div class="wrapper">
+    <div class="logo">
+        <img src="logo_white2.png" alt="">
+    </div>
+    <div class="text-center mt-4 name">
+        Buffit
+    </div>
+    <form class="p-3 mt-3" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <div class="form-field d-flex align-items-center">
+            <span class="far fa-user"></span>
+            <input type="text" name="email" id="email" placeholder="Email">
+        </div>
+        <div class="form-field d-flex align-items-center">
+            <span class="fas fa-key"></span>
+            <input type="password" name="heslo" id="heslo" placeholder="Password">
+        </div>
+        <button type="submit" class="btn mt-3">Login</button>
+    </form>
+    <div class="text-center fs-6">
+         <a href="register.php">Sign up</a>
+    </div>
+</div>
 
 </body>
 </html>
