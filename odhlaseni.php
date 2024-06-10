@@ -8,6 +8,6 @@ if (isset($_SESSION['user_id'])) {
     $message = "Uživatel nebyl přihlášen.";
 }
 
-header("Location: index.html?message=" . urlencode($message));
+header("Location: index.php?message=" . urlencode($message));
 exit();
 ?>

@@ -1,42 +1,37 @@
 <?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['video_id'])) {
+    $videoId = $_POST['video_id'];
 
-if (isset($_GET['videoPath'])) {
-    $videoPath = $_GET['videoPath'];
-
+    // Database connection
     $host = "md66.wedos.net";
     $db_name = "d230417_buffit";
     $username = "a230417_buffit";
-    $password = "n6T3uSvj";
+    $password = "495804Patrik.";
 
     try {
         $conn = new PDO("mysql:host=$host;dbname=$db_name", $username, $password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // Získání titulu videa před jeho smazáním pro vytvoření informace pro uživatele
-        $stmt_title = $conn->prepare("SELECT Title FROM Soutezni_videa WHERE Video_path = :videoPath");
-        $stmt_title->bindParam(':videoPath', $videoPath);
-        $stmt_title->execute();
-        $videoTitle = $stmt_title->fetchColumn();
+        // Get video path to delete file
+        $stmt = $conn->prepare("SELECT Video_path FROM Soutezni_videa WHERE ID_videa = ?");
+        $stmt->execute([$videoId]);
+        $videoPath = $stmt->fetchColumn();
 
-        // Smazání videa z databáze
-        $stmt_delete = $conn->prepare("DELETE FROM Soutezni_videa WHERE Video_path = :videoPath");
-        $stmt_delete->bindParam(':videoPath', $videoPath);
-        $stmt_delete->execute();
+        // Delete video from database
+        $removeQuery = "DELETE FROM Soutezni_videa WHERE ID_videa = ?";
+        $removeStmt = $conn->prepare($removeQuery);
+        $removeStmt->execute([$videoId]);
 
-        // Smazání souboru videa ze serveru
+        // Delete video file from server
         if (file_exists($videoPath)) {
             unlink($videoPath);
         }
 
-        // Přesměrování s informací pro uživatele
-        header("Location: soutezni_videa.php?deleted=true&title=" . urlencode($videoTitle));
-        exit();
+        echo json_encode(['success' => true]);
     } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
-    } finally {
-        // Ujistěte se, že vždy uzavřete spojení s databází
-        $conn = null;
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }
+} else {
+    echo json_encode(['success' => false, 'message' => 'Neplatný požadavek']);
 }
-
 ?>

@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($user && password_verify($heslo, $user['Heslo'])) {
             $_SESSION['user_id'] = $user['ID_user'];
-            header("Location: index.html"); // Přesměrování na dashboard.php nebo jinou stránku
+            header("Location: index.php"); // Přesměrování na dashboard.php nebo jinou stránku
             exit();
         } else {
             echo "Neplatné přihlašovací údaje. Zkuste to znovu nebo <a href='register.php'>se zaregistrujte</a>.";
@@ -77,10 +77,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <span class="fas fa-key"></span>
             <input type="password" name="heslo" id="heslo" placeholder="Password">
         </div>
-        <button type="submit" class="btn mt-3">Login</button>
+        <button type="submit" class="btn mt-3">Přihlášení</button>
     </form>
     <div class="text-center fs-6">
-         <a href="register.php">Sign up</a>
+         <a href="register.php">Zaregistrovat se</a>
     </div>
 </div>
 
